@@ -1,7 +1,7 @@
-package com.lococator.controller;
+package com.lococater.controller;
 
-import com.lococator.entity.User;
-import com.lococator.service.UserService;
+import com.lococater.entity.User;
+import com.lococater.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("")
+    @GetMapping("/")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
@@ -31,8 +31,8 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @GetMapping("/checkUsernameAvailability/{username}")
-    public boolean checkForUser(@PathVariable String username){
+    @GetMapping("")
+    public boolean checkForUser(@RequestParam String username){
         return userService.isUsernameClaimed(username);
     }
 
