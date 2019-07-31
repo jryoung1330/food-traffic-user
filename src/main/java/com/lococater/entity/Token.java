@@ -1,4 +1,4 @@
-package com.lococator.entity;
+package com.lococater.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -21,12 +21,6 @@ public class Token {
     public Long userId;
 
     public Token() {
-    }
-
-    public Token(int id, @NotNull String tokenCode, @NotNull Long userId) {
-        this.id = id;
-        this.tokenCode = tokenCode;
-        this.userId = userId;
     }
 
     public int getId() {

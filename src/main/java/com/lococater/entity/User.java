@@ -1,10 +1,9 @@
-package com.lococator.entity;
+package com.lococater.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.sql.Blob;
 import java.sql.Date;
 import java.util.Set;
 
@@ -39,39 +38,19 @@ public class User {
     @Column(name = "JOIN_DATE")
     private Date joinDate;
 
-    @Column(name = "EMPLOYEEID")
-    private long employeeId;
+    @Column(name = "LAST_LOGIN")
+    private Date lastLogin;
 
-    @Column(name = "IS_OWNER")
-    private boolean isOwner;
-
-    @Column(name = "HAS_ADMIN_PRIVILEGES")
-    private boolean hasAdminPrivileges;
-
-    @Column(name = "FOODTRUCKID")
-    private long foodTruckId;
+    @Column(name = "STATUS")
+    private String status;
 
     @ManyToMany(cascade= CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinTable(name="FAVORITES",
+    @JoinTable(name="FAVORITE",
             joinColumns=@JoinColumn(name="USERID"),
             inverseJoinColumns=@JoinColumn(name="FOODTRUCKID"))
     private Set<FoodTruck> favorites;
 
     public User() {
-    }
-
-    public User(@Min(0) long id, @Email @NotNull String email, @NotNull @NotEmpty @Size(min = 4, max = 25) String username, String passwordHash, String passwordSalt, Date joinDate, long employeeId, boolean isOwner, boolean hasAdminPrivileges, long foodTruckId, Set<FoodTruck> favorites) {
-        this.id = id;
-        this.email = email;
-        this.username = username;
-        this.passwordHash = passwordHash;
-        this.passwordSalt = passwordSalt;
-        this.joinDate = joinDate;
-        this.employeeId = employeeId;
-        this.isOwner = isOwner;
-        this.hasAdminPrivileges = hasAdminPrivileges;
-        this.foodTruckId = foodTruckId;
-        this.favorites = favorites;
     }
 
     public long getId() {
@@ -122,36 +101,20 @@ public class User {
         this.joinDate = joinDate;
     }
 
-    public long getEmployeeId() {
-        return employeeId;
+    public Date getLastLogin() {
+        return lastLogin;
     }
 
-    public void setEmployeeId(long employeeId) {
-        this.employeeId = employeeId;
+    public void setLastLogin(Date lastLogin) {
+        this.lastLogin = lastLogin;
     }
 
-    public boolean isOwner() {
-        return isOwner;
+    public String getStatus() {
+        return status;
     }
 
-    public void setOwner(boolean owner) {
-        isOwner = owner;
-    }
-
-    public boolean isHasAdminPrivileges() {
-        return hasAdminPrivileges;
-    }
-
-    public void setHasAdminPrivileges(boolean hasAdminPrivileges) {
-        this.hasAdminPrivileges = hasAdminPrivileges;
-    }
-
-    public long getFoodTruckId() {
-        return foodTruckId;
-    }
-
-    public void setFoodTruckId(long foodTruckId) {
-        this.foodTruckId = foodTruckId;
+    public void setStatus(String status) {
+        this.status = status;
     }
 
     public Set<FoodTruck> getFavorites() {
@@ -171,10 +134,8 @@ public class User {
                 ", passwordHash='" + passwordHash + '\'' +
                 ", passwordSalt='" + passwordSalt + '\'' +
                 ", joinDate=" + joinDate +
-                ", employeeId=" + employeeId +
-                ", isOwner=" + isOwner +
-                ", hasAdminPrivileges=" + hasAdminPrivileges +
-                ", foodTruckId=" + foodTruckId +
+                ", lastLogin=" + lastLogin +
+                ", status='" + status + '\'' +
                 ", favorites=" + favorites +
                 '}';
     }

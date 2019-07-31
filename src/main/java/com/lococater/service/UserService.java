@@ -1,9 +1,9 @@
-package com.lococator.service;
+package com.lococater.service;
 
-import com.lococator.entity.Token;
-import com.lococator.entity.User;
-import com.lococator.repository.TokenRepo;
-import com.lococator.repository.UserRepo;
+import com.lococater.entity.Token;
+import com.lococater.entity.User;
+import com.lococater.repository.TokenRepo;
+import com.lococater.repository.UserRepo;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;

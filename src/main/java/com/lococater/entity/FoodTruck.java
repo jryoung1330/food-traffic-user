@@ -1,16 +1,13 @@
-package com.lococator.entity;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+package com.lococater.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.Set;
 
 @Entity
-@Table(name="FOODTRUCK")
+@Table(name="FOOD_TRUCK")
 public class FoodTruck {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,16 +21,10 @@ public class FoodTruck {
     @Size(max = 50)
     private String name;
 
-    @Column(name="COMPANY")
-    @NotNull
-    @NotEmpty
-    @Size(max = 100)
-    private String company;
-
-    @Column(name = "LONGITUDEX")
+    @Column(name = "LONGITUDE")
     private Double longitude;
 
-    @Column(name="LATITUDEY")
+    @Column(name="LATITUDE")
     private Double latitude;
 
     @Column(name = "STREET_ADDRESS")
@@ -57,7 +48,7 @@ public class FoodTruck {
     @Size(max = 100)
     private String county;
 
-    @Column(name = "ZIPCODE")
+    @Column(name = "ZIP_CODE")
     private int zipCode;
 
     @Column(name = "LOCATION_DETAILS")
@@ -67,19 +58,11 @@ public class FoodTruck {
     @Column(name = "DESCRIPTION")
     private String description;
 
-    @Column(name = "ASSOCIATE_KEY")
-    @JsonIgnore
-    private String associateKey;
-
-    @OneToMany(mappedBy = "foodTruckId")
-    private Set<User> ownerEmployees;
-
     public FoodTruck() {}
 
-    public FoodTruck(@Min(0) Long id, @NotNull @NotEmpty @Size(max = 50) String name, @NotNull @NotEmpty @Size(max = 100) String company, Double longitude, Double latitude, @Size(max = 100) String streetAddress, @NotNull @NotEmpty @Size(max = 100) String city, @NotEmpty @NotNull @Size(min = 2, max = 2) String state, @NotNull @Size(max = 100) String county, int zipCode, @Size(max = 1000) String locationDetails, String description, String associateKey, Set<User> ownerEmployees) {
+    public FoodTruck(@Min(0) Long id, @NotNull @NotEmpty @Size(max = 50) String name, Double longitude, Double latitude, @Size(max = 100) String streetAddress, @NotNull @NotEmpty @Size(max = 100) String city, @NotEmpty @NotNull @Size(min = 2, max = 2) String state, @NotNull @Size(max = 100) String county, int zipCode, @Size(max = 1000) String locationDetails, String description) {
         this.id = id;
         this.name = name;
-        this.company = company;
         this.longitude = longitude;
         this.latitude = latitude;
         this.streetAddress = streetAddress;
@@ -89,8 +72,6 @@ public class FoodTruck {
         this.zipCode = zipCode;
         this.locationDetails = locationDetails;
         this.description = description;
-        this.associateKey = associateKey;
-        this.ownerEmployees = ownerEmployees;
     }
 
     public Long getId() {
@@ -107,14 +88,6 @@ public class FoodTruck {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getCompany() {
-        return company;
-    }
-
-    public void setCompany(String company) {
-        this.company = company;
     }
 
     public Double getLongitude() {
@@ -185,28 +158,11 @@ public class FoodTruck {
 
     public void setDescription(String description) { this.description = description; }
 
-    public String getAssociateKey() {
-        return associateKey;
-    }
-
-    public void setAssociateKey(String associateKey) {
-        this.associateKey = associateKey;
-    }
-
-    public Set<User> getOwnerEmployees() {
-        return ownerEmployees;
-    }
-
-    public void setOwnerEmployees(Set<User> Users) {
-        this.ownerEmployees = Users;
-    }
-
     @Override
     public String toString() {
         return "FoodTruck{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", company='" + company + '\'' +
                 ", longitude=" + longitude +
                 ", latitude=" + latitude +
                 ", streetAddress='" + streetAddress + '\'' +
@@ -216,8 +172,6 @@ public class FoodTruck {
                 ", zipCode=" + zipCode +
                 ", locationDetails='" + locationDetails + '\'' +
                 ", description='" + description + '\'' +
-                ", associateKey='" + associateKey + '\'' +
-                ", ownerEmployees=" + ownerEmployees +
                 '}';
     }
 }
