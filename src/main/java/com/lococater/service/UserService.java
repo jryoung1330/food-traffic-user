@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
-import java.sql.Date;
+import java.time.ZonedDateTime;
 import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
@@ -54,7 +54,7 @@ public class UserService {
             stringDigest(user);
             user.setEmail(user.getEmail().toLowerCase());
             user.setUsername(user.getUsername());
-            user.setJoinDate(new Date(System.currentTimeMillis()));
+            user.setJoinDate(ZonedDateTime.now());
 //            System.out.println(user);
             userRepo.saveAndFlush(user);
 
@@ -67,6 +67,44 @@ public class UserService {
         }
 
         return user;
+    }
+
+    public User loginUser(User userToAuth) {
+        String password = userToAuth.getPasswordHash();
+        String username = userToAuth.getUsername();
+        User user =  getUserByUsername(username);
+
+        // decode password
+        byte[] decodedBytes = Base64.getDecoder().decode(password);
+        password = new String(decodedBytes);
+
+        // verify and generate token
+        if(user != null && verifyPassword(password, user.getPasswordSalt(), user.getPasswordHash())) {
+            Token token = new Token();
+            token.setTokenCode(generateRandomToken());
+            token.setUserId(user.getId());
+            tokenRepo.save(token);
+            user.setPasswordHash(token.getTokenCode());
+            // user.setPasswordSalt(null);
+        }else {
+            user = new User();
+            user.setId(-1);
+        }
+
+        return user;
+    }
+
+    public User checkToken(String token) {
+        Token tk = tokenRepo.findByTokenCode(token);
+        if(tk == null) {
+            User user = new User();
+            return user;
+        }
+        else {
+            Optional<User> userOpt = userRepo.findById(tk.getUserId());
+            User user = userOpt.get();
+            return user;
+        }
     }
 
     public User updateUser(User user) {
@@ -105,50 +143,11 @@ public class UserService {
         return testDigest.equals(hash);
     }
 
-    public User loginUser(User userToAuth) {
-        String password = userToAuth.getPasswordHash();
-        String username = userToAuth.getUsername();
-        User user =  getUserByUsername(username);
-
-        // decode password
-        byte[] decodedBytes = Base64.getDecoder().decode(password);
-        password = new String(decodedBytes);
-
-        // verify and generate token
-        if(user != null && verifyPassword(password, user.getPasswordSalt(), user.getPasswordHash())) {
-            Token token = new Token();
-            token.setTokenCode(generateRandomToken());
-            token.setUserId(user.getId());
-            tokenRepo.save(token);
-            user.setPasswordHash(token.getTokenCode());
-            // user.setPasswordSalt(null);
-        }else {
-            user = new User();
-            user.setId(-1);
-        }
-
-        return user;
-    }
-
     private static String generateRandomToken() {
         SecureRandom random = new SecureRandom();
         byte[] tokenValue = new byte[4];
         random.nextBytes(tokenValue);
         String token = Hex.encodeHexString(tokenValue);
         return token;
-    }
-
-    public User checkToken(String token) {
-        Token tk = tokenRepo.findByTokenCode(token);
-        if(tk == null) {
-            User user = new User();
-            return user;
-        }
-        else {
-            Optional<User> userOpt = userRepo.findById(tk.getUserId());
-            User user = userOpt.get();
-            return user;
-        }
-
     }
 }

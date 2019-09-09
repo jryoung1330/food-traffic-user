@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.sql.Date;
+import java.time.ZonedDateTime;
 import java.util.Set;
 
 @Entity
@@ -36,10 +37,10 @@ public class User {
     private String passwordSalt;
 
     @Column(name = "JOIN_DATE")
-    private Date joinDate;
+    private ZonedDateTime joinDate;
 
     @Column(name = "LAST_LOGIN")
-    private Date lastLogin;
+    private ZonedDateTime lastLogin;
 
     @Column(name = "STATUS")
     private String status;
@@ -49,9 +50,6 @@ public class User {
             joinColumns=@JoinColumn(name="USERID"),
             inverseJoinColumns=@JoinColumn(name="FOODTRUCKID"))
     private Set<FoodTruck> favorites;
-
-    public User() {
-    }
 
     public long getId() {
         return id;
@@ -93,19 +91,19 @@ public class User {
         this.passwordSalt = passwordSalt;
     }
 
-    public Date getJoinDate() {
+    public ZonedDateTime getJoinDate() {
         return joinDate;
     }
 
-    public void setJoinDate(Date joinDate) {
+    public void setJoinDate(ZonedDateTime joinDate) {
         this.joinDate = joinDate;
     }
 
-    public Date getLastLogin() {
+    public ZonedDateTime getLastLogin() {
         return lastLogin;
     }
 
-    public void setLastLogin(Date lastLogin) {
+    public void setLastLogin(ZonedDateTime lastLogin) {
         this.lastLogin = lastLogin;
     }
 

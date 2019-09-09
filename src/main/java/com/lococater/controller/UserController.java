@@ -21,7 +21,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/")
+    @GetMapping("")
     public List<User> getAllUsers() {
         return userService.getAllUsers();
     }
@@ -31,7 +31,7 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @GetMapping("")
+    @GetMapping("/check-user")
     public boolean checkForUser(@RequestParam String username){
         return userService.isUsernameClaimed(username);
     }
