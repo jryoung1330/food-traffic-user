@@ -1,6 +1,6 @@
-package com.lococater.repository;
+package com.foodtraffic.repository;
 
-import com.lococater.entity.User;
+import com.foodtraffic.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
