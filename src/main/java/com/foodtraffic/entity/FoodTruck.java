@@ -1,4 +1,4 @@
-package com.lococater.entity;
+package com.foodtraffic.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.Min;

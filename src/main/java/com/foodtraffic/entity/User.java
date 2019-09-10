@@ -1,10 +1,9 @@
-package com.lococater.entity;
+package com.foodtraffic.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
-import java.sql.Date;
 import java.time.ZonedDateTime;
 import java.util.Set;
 
