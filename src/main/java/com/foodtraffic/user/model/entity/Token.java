@@ -1,4 +1,4 @@
-package com.foodtraffic.entity;
+package com.foodtraffic.user.model.entity;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;

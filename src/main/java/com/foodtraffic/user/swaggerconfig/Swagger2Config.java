@@ -1,4 +1,4 @@
-package com.foodtraffic.swaggerconfig;
+package com.foodtraffic.user.swaggerconfig;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,11 +22,9 @@ public class Swagger2Config {
                 .build().apiInfo(apiEndPointsInfo());
     }
     private ApiInfo apiEndPointsInfo() {
-        return new ApiInfoBuilder().title("Spring Boot REST API")
-                .description("Food Truck Locator REST API")
-                .contact(new Contact("Jordan Young", null,"jryoung1330@gmail.com"))
-                .license("Apache 2.0")
-                .licenseUrl("http://www.apache.org/licenses/LICENSE-2.0.html")
+        return new ApiInfoBuilder().title("Food Traffic User API")
+//                .description("API to interact with the Food Traffic User.")
+//                .contact(new Contact("Jordan Young", null,"jryoung1330@gmail.com"))
                 .version("1.0.0")
                 .build();
     }

@@ -1,10 +1,11 @@
-package com.foodtraffic.entity;
+package com.foodtraffic.user.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -14,16 +15,13 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "USERID")
-    @Min(0)
     private long id;
 
     @Email
-    @NotNull
     @Column(name = "EMAIL")
     private String email;
 
     @NotNull
-    @NotEmpty
     @Size(min = 4, max = 25)
     @Column(name = "USERNAME")
     private String username;
@@ -41,8 +39,13 @@ public class User {
     @Column(name = "LAST_LOGIN")
     private ZonedDateTime lastLogin;
 
+    @JsonIgnore
     @Column(name = "STATUS")
     private String status;
+
+    @JsonIgnore
+    @Column(name = "IS_EMAIL_VERIFIED")
+    private boolean isEmailVerified;
 
     @ManyToMany(cascade= CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinTable(name="FAVORITE",
@@ -114,6 +117,14 @@ public class User {
         this.status = status;
     }
 
+    public boolean getIsEmailVerified() {
+        return isEmailVerified;
+    }
+
+    public void setIsEmailVerified(boolean isEmailVerified) {
+        this.isEmailVerified = isEmailVerified;
+    }
+
     public Set<FoodTruck> getFavorites() {
         return favorites;
     }
@@ -133,7 +144,30 @@ public class User {
                 ", joinDate=" + joinDate +
                 ", lastLogin=" + lastLogin +
                 ", status='" + status + '\'' +
+                ", isEmailVerified='" + isEmailVerified + '\'' +
                 ", favorites=" + favorites +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return id == user.id &&
+                isEmailVerified == user.isEmailVerified &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(passwordHash, user.passwordHash) &&
+                Objects.equals(passwordSalt, user.passwordSalt) &&
+                Objects.equals(joinDate, user.joinDate) &&
+                Objects.equals(lastLogin, user.lastLogin) &&
+                Objects.equals(status, user.status) &&
+                Objects.equals(favorites, user.favorites);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, email, username, passwordHash, passwordSalt, joinDate, lastLogin, status, isEmailVerified, favorites);
     }
 }
