@@ -41,7 +41,7 @@ public class UserServiceUpdateUserTest {
         user.setUsername(null);
         user.setEmail(null);
         user.setPasswordHash(null);
-        when(userRepo.getUserById(anyLong())).thenReturn(mockOptionalUser(mockUser()));
+        when(userRepo.findUserById(anyLong())).thenReturn(Optional.of(mockUser()));
         when(modelMapper.map(mockUser(), User.class)).thenReturn(mockUser());
     }
 
@@ -117,12 +117,8 @@ public class UserServiceUpdateUserTest {
 
     @Test
     public void givenUserNotFound_whenUpdateUser_returnNull() {
-        when(userRepo.getUserById(anyLong())).thenReturn(Optional.empty());
+        when(userRepo.findUserById(anyLong())).thenReturn(Optional.empty());
         assertNull(userService.updateUser(100000L, user));
-    }
-
-    private Optional<User> mockOptionalUser(User user) {
-        return Optional.of(user);
     }
 
     private User mockUser() {

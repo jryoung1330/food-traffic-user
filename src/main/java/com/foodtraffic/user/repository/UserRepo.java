@@ -8,8 +8,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepo extends JpaRepository<User, Long> {
-    Optional<User> getUserById(Long id);
-    User findUserByUsernameIgnoreCase(String username);
+    Optional<User> findUserById(Long id);
+    User getUserByUsernameIgnoreCase(String username);
+    User getUserByUsernameIgnoreCaseOrEmailIgnoreCase(String username, String email);
     boolean existsByUsernameIgnoreCase(String username);
     boolean existsByEmailIgnoreCase(String email);
     boolean existsById(Long id);

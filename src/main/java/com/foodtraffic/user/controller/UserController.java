@@ -33,7 +33,7 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public UserDto loginUser(@RequestHeader HttpHeaders headers, HttpServletResponse response, @CookieValue(value = "LOCO-USER", defaultValue="LOCO-USER") String accessToken) {
+    public UserDto loginUser(@RequestHeader HttpHeaders headers, HttpServletResponse response, @CookieValue(value = "LOCO-USER", defaultValue="") String accessToken) {
         return userService.loginUser(headers, accessToken, response);
     }
 

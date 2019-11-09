@@ -46,37 +46,38 @@ public class UserServiceLoginUserTest {
     @BeforeEach
     public void setup() {
         MockitoAnnotations.initMocks(this);
-        when(userRepo.findUserByUsernameIgnoreCase("test")).thenReturn(mockUser());
+        when(userRepo.getUserByUsernameIgnoreCase("test")).thenReturn(mockUser());
         when(modelMapper.map(mockUser(), UserDto.class)).thenReturn(mockUserDto());
-        when(tokenRepo.findByTokenCode("1a2b3c4d5e6f7g8h")).thenReturn(mockToken());
-        when(userRepo.findById(0L)).thenReturn(Optional.of(mockUser()));
+        when(tokenRepo.findByTokenCode("1a2b3c4d5e6f7g8h")).thenReturn(Optional.of(mockToken()));
+        when(userRepo.getOne(0L)).thenReturn(mockUser());
+        when(userRepo.getUserByUsernameIgnoreCaseOrEmailIgnoreCase("test", "test")).thenReturn(mockUser());
     }
 
     @Test
     public void givenValidCredentialsAndNoTokenInDatabase_whenUserLogin_createNewTokenAndReturnUser() {
         headers.set("Authorization", "Basic dGVzdDpwYXNzd29yZA==");
-        assertEquals(userService.loginUser(headers, null, response), mockUserDto());
+        assertEquals(userService.loginUser(headers, "", response), mockUserDto());
     }
 
     @Test
     public void givenValidCredentialsAndTokenInDatabase_whenUserLogin_updateTokenAndReturnUser() {
         when(tokenRepo.getByUserId(0L)).thenReturn(mockToken());
         headers.set("Authorization", "Basic dGVzdDpwYXNzd29yZA==");
-        assertEquals(userService.loginUser(headers, null, response), mockUserDto());
+        assertEquals(userService.loginUser(headers, "", response), mockUserDto());
     }
 
     @Test
     public void givenInvalidPassword_whenUserLogin_throwException() {
         headers.set("Authorization", "Basic dGVzdDpwYXNzd29yZDEyMw==");
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, null, response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "", response));
     }
 
     @Test
     public void givenUserDoesNotExist_whenUserLogin_throwException() {
-        when(userRepo.findUserByUsernameIgnoreCase("test")).thenReturn(null);
+        when(userRepo.getUserByUsernameIgnoreCaseOrEmailIgnoreCase("test", "test")).thenReturn(null);
         headers.set("Authorization", "Basic dGVzdDpwYXNzd29yZA==");
 
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, null, response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "", response));
     }
 
     @Test
@@ -86,13 +87,13 @@ public class UserServiceLoginUserTest {
 
     @Test
     public void givenInvalidAccessToken_whenUserLogin_throwException() {
-        when(tokenRepo.findByTokenCode("1a2b3c4d5e6f7g8h")).thenReturn(null);
+        when(tokenRepo.findByTokenCode("1a2b3c4d5e6f7g8h")).thenReturn(Optional.empty());
         assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "1a2b3c4d5e6f7g8h", response));
     }
 
     @Test
     public void givenNoAuthHeaderAndNoAccessToken_whenUserLogin_throwException() {
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, null, response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "", response));
     }
 
     private User mockUser() {
