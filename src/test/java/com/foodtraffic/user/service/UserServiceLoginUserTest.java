@@ -92,6 +92,27 @@ public class UserServiceLoginUserTest {
     }
 
     @Test
+    public void givenValidCredentialsButUserIsInactive_whenUserLogin_throwException() {
+        headers.set("Authorization", "Basic dGVzdDpwYXNzd29yZA==");
+        User mockUser = mockUser();
+        mockUser.setStatus(2);
+        mockUser.setEmailVerified(false);
+        when(userRepo.getUserByUsernameIgnoreCaseOrEmailIgnoreCase("test", "test")).thenReturn(mockUser);
+
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "", response));
+    }
+
+    @Test
+    public void givenValidAccessTokenButUserIsInactive_whenUserLogin_throwException() {
+        User mockUser = mockUser();
+        mockUser.setStatus(2);
+        mockUser.setEmailVerified(false);
+        when(userRepo.getOne(0L)).thenReturn(mockUser);
+
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "1a2b3c4d5e6f7g8h", response));
+    }
+
+    @Test
     public void givenNoAuthHeaderAndNoAccessToken_whenUserLogin_throwException() {
         assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "", response));
     }
@@ -103,9 +124,9 @@ public class UserServiceLoginUserTest {
         mockUser.setEmail("test@test.com");
         mockUser.setPasswordHash("835b456635e1ac11d3ee651b4c7d88276b730e79d76d9ccd7fa9637faf87791e");
         mockUser.setPasswordSalt("1e1845243ce6bb70");
-        mockUser.setStatus("ACTIVE");
+        mockUser.setStatus(0);
         mockUser.setJoinDate(ZonedDateTime.of(LocalDate.of(2020, Month.JANUARY, 1), LocalTime.of(12, 1), ZoneId.of("UTC")));
-        mockUser.setIsEmailVerified(true);
+        mockUser.setEmailVerified(true);
         return mockUser;
     }
 

@@ -3,6 +3,7 @@ package com.foodtraffic.user.service;
 import com.foodtraffic.user.model.dto.UserDto;
 import com.foodtraffic.user.model.entity.Token;
 import com.foodtraffic.user.model.entity.User;
+import com.foodtraffic.user.model.entity.UserStatus;
 import com.foodtraffic.user.repository.TokenRepo;
 import com.foodtraffic.user.repository.UserRepo;
 import org.apache.commons.codec.binary.Hex;
@@ -36,34 +37,41 @@ public class UserServiceImpl implements UserService {
     ModelMapper modelMapper;
 
     @Override
-    public User getUserById(Long id) {
+    public UserDto getUserById(Long id) {
         Optional<User> user = userRepo.findUserById(id);
         if(user.isPresent()) {
-            return user.get();
+            return modelMapper.map(user.get(), UserDto.class);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User does not exist.");
         }
     }
 
     @Override
-    public User getUserByUsername(String username) {
-        return userRepo.getUserByUsernameIgnoreCase(username);
+    public boolean userExists(String username, Long id) {
+        if(username != null) {
+            return userRepo.existsByUsernameIgnoreCase(username);
+        } else if(id != null) {
+            return userRepo.existsById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username or Id is required");
+        }
     }
 
     @Override
-    public boolean isUsernameClaimed(String username) {
-        return userRepo.existsByUsernameIgnoreCase(username);
-    }
-
-    @Override
-    public UserDto createUser(User user) {
+    public UserDto createUser(User user, HttpServletResponse response) {
         if(isRequestValid(user.getUsername(), user.getEmail(), user.getPasswordHash())) {
+
+            // create user
             hashPassword(user);
             user.setEmail(user.getEmail());
             user.setUsername(user.getUsername());
             user.setJoinDate(ZonedDateTime.now());
-            user.setStatus("ACTIVE");
+            user.setStatus(UserStatus.ACTIVE.getStatusNum());
             user = userRepo.saveAndFlush(user);
+
+            // create user access token
+            createUserToken(user.getId(), 8, response);
+
             return modelMapper.map(user, UserDto.class);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid Request");
@@ -72,18 +80,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto loginUser(HttpHeaders headers, String accessToken, HttpServletResponse response) {
-        User user = (accessToken.isEmpty() ? checkCredentials(headers, response) : checkToken(accessToken));
-        return modelMapper.map(user, UserDto.class);
+        return (accessToken.isEmpty() ? checkCredentials(headers, response) : checkToken(accessToken));
     }
 
     @Override
-    public User checkToken(String accessToken) {
+    public UserDto checkToken(String accessToken) {
         Optional<Token> token = tokenRepo.findByTokenCode(accessToken);
+        String message;
         if(token.isPresent()) {
-            return userRepo.getOne(token.get().getUserId());
+            User user = userRepo.getOne(token.get().getUserId());
+            if(UserStatus.ACTIVE.getStatusNum() != user.getStatus() && !user.isEmailVerified()) {
+                message = "Email verification is required";
+            } else {
+                return modelMapper.map(user, UserDto.class);
+            }
         } else {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+            message = "User is not authorized";
         }
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, message);
     }
 
     @Override
@@ -91,16 +105,14 @@ public class UserServiceImpl implements UserService {
         Optional<User> existingUser = userRepo.findUserById(id);
         if(existingUser.isPresent()){
             request = mergeUser(request, existingUser.get());
-            UserDto userToReturn = modelMapper.map(request, UserDto.class);
             if (!request.equals(existingUser.get())) {
-                userRepo.saveAndFlush(request);
+                userRepo.save(request);
             }
-            return userToReturn;
+            return modelMapper.map(request, UserDto.class);
         } else {
             return null;
         }
     }
-
 
     /*
      * Helper methods
@@ -129,14 +141,6 @@ public class UserServiceImpl implements UserService {
 
         // verify that they are the same
         return testDigest.equals(hash);
-    }
-
-    // generate a random token
-    private static String generateRandomToken() {
-        SecureRandom random = new SecureRandom();
-        byte[] tokenValue = new byte[8];
-        random.nextBytes(tokenValue);
-        return Hex.encodeHexString(tokenValue);
     }
 
     // merge the existing user and the updated user
@@ -191,15 +195,8 @@ public class UserServiceImpl implements UserService {
 
     }
 
-    // adds cookie to the response
-    private void addCookie(HttpServletResponse response, String accessToken) {
-        Cookie cookie = new Cookie("LOCO-USER", accessToken);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        response.addCookie(cookie);
-    }
-
-    private User checkCredentials(HttpHeaders headers, HttpServletResponse response) {
+    // check user credentials
+    private UserDto checkCredentials(HttpHeaders headers, HttpServletResponse response) {
         // get credentials from authorization header
         String[] credentials = getCredentialsFromHeader(headers.get(HttpHeaders.AUTHORIZATION));
 
@@ -210,7 +207,7 @@ public class UserServiceImpl implements UserService {
 
         if (user == null) {
             message = "User does not exist";
-        } else if (!"ACTIVE".equals(user.getStatus()) && !user.getIsEmailVerified()) {
+        } else if (!"ACTIVE".equals(user.getStatus()) && !user.isEmailVerified()) {
             message = "Email verification is required";
         } else if (!verifyPassword(credentials[1], user.getPasswordSalt(), user.getPasswordHash())) {
             message = "Password is incorrect";
@@ -221,13 +218,38 @@ public class UserServiceImpl implements UserService {
                 token = new Token();
                 token.setUserId(user.getId());
             }
-            token.setTokenCode(generateRandomToken());
+            token.setTokenCode(generateRandomToken(8));
             tokenRepo.save(token);
             addCookie(response, token.getTokenCode());
-            return user;
+            return modelMapper.map(user, UserDto.class);
         }
 
         throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, message);
+    }
+
+    // create a token
+    private void createUserToken(long id, int tokenSize, HttpServletResponse response) {
+        Token token = new Token();
+        token.setUserId(id);
+        token.setTokenCode(generateRandomToken(tokenSize));
+        tokenRepo.save(token);
+        addCookie(response, token.getTokenCode());
+    }
+
+    // generate a random token
+    private String generateRandomToken(int size) {
+        SecureRandom random = new SecureRandom();
+        byte[] tokenValue = new byte[size];
+        random.nextBytes(tokenValue);
+        return Hex.encodeHexString(tokenValue);
+    }
+
+    // adds cookie to the response
+    private void addCookie(HttpServletResponse response, String accessToken) {
+        Cookie cookie = new Cookie("_gid", accessToken);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+        response.addCookie(cookie);
     }
 
 

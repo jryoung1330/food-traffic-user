@@ -128,9 +128,9 @@ public class UserServiceUpdateUserTest {
         mockUser.setEmail("test@test.com");
         mockUser.setPasswordHash("742d2d94a64b9e155ad08540786eed509ccbfadda3f3e898f222000f4578048e");
         mockUser.setPasswordSalt("01234567abcdefgh");
-        mockUser.setStatus("ACTIVE");
+        mockUser.setStatus(0);
         mockUser.setJoinDate(ZonedDateTime.of(LocalDate.of(2020, Month.JANUARY, 1), LocalTime.of(12, 1), ZoneId.of("UTC")));
-        mockUser.setIsEmailVerified(false);
+        mockUser.setEmailVerified(false);
         return mockUser;
     }
 

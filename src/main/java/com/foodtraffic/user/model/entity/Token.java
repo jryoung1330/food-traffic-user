@@ -1,10 +1,13 @@
 package com.foodtraffic.user.model.entity;
 
+import lombok.Data;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "USER_TOKEN")
+@Data
 public class Token {
 
     @Id
@@ -12,47 +15,12 @@ public class Token {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(name = "TOKEN_CODE")
     @NotNull
+    @Column(name = "TOKEN_CODE")
     public String tokenCode;
 
-    @Column(name = "USERID")
     @NotNull
+    @Column(name = "USERID")
     public Long userId;
 
-    public Token() {
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getTokenCode() {
-        return tokenCode;
-    }
-
-    public void setTokenCode(String tokenCode) {
-        this.tokenCode = tokenCode;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    @Override
-    public String toString() {
-        return "Token{" +
-                "id=" + id +
-                ", tokenCode='" + tokenCode + '\'' +
-                ", userId=" + userId +
-                '}';
-    }
 }
