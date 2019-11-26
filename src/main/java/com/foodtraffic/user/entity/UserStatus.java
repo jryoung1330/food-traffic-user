@@ -1,4 +1,4 @@
-package com.foodtraffic.user.model.entity;
+package com.foodtraffic.user.entity;
 
 public enum UserStatus {
     ACTIVE(0),

@@ -1,4 +1,4 @@
-package com.foodtraffic.user.model.entity;
+package com.foodtraffic.user.entity;
 
 import lombok.Data;
 
@@ -21,6 +21,6 @@ public class Token {
 
     @NotNull
     @Column(name = "USERID")
-    public Long userId;
+    public long userId;
 
 }

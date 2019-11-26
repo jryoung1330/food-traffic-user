@@ -121,5 +121,14 @@
             <artifactId>lombok</artifactId>
             <version>1.18.10</version>
         </dependency>
+
+        <!-- ft models and clients -->
+        <dependency>
+            <groupId>com.foodtraffic</groupId>
+            <artifactId>models</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/models-1.0.jar</systemPath>
+        </dependency>
     </dependencies>
 </project>

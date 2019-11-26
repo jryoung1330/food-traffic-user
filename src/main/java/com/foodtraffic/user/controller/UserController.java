@@ -1,7 +1,7 @@
 package com.foodtraffic.user.controller;
 
-import com.foodtraffic.user.model.dto.UserDto;
-import com.foodtraffic.user.model.entity.User;
+import com.foodtraffic.model.dto.UserDto;
+import com.foodtraffic.user.entity.User;
 import com.foodtraffic.user.service.UserService;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
@@ -9,7 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletResponse;
 
 @CrossOrigin(origins = {"http://localhost:3000"})

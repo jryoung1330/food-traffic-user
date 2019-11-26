@@ -1,7 +1,7 @@
 package com.foodtraffic.user.service;
 
-import com.foodtraffic.user.model.dto.UserDto;
-import com.foodtraffic.user.model.entity.User;
+import com.foodtraffic.model.dto.UserDto;
+import com.foodtraffic.user.entity.User;
 import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.HttpServletResponse;
@@ -16,10 +16,10 @@ public interface UserService {
             "[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\" +
             "[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
 
-    UserDto getUserById(Long id);
-    boolean userExists(String username, Long id);
+    UserDto getUserById(long id);
+    boolean userExists(String username, long id);
     UserDto createUser(User user, HttpServletResponse response);
     UserDto loginUser(HttpHeaders headers, String token, HttpServletResponse response);
     UserDto checkToken(String token);
-    UserDto updateUser(Long id, User user);
+    UserDto updateUser(long id, User user);
 }

@@ -1,11 +1,11 @@
 package com.foodtraffic.user.service;
 
-import com.foodtraffic.user.model.dto.UserDto;
-import com.foodtraffic.user.model.entity.Token;
-import com.foodtraffic.user.model.entity.User;
-import com.foodtraffic.user.model.entity.UserStatus;
-import com.foodtraffic.user.repository.TokenRepo;
-import com.foodtraffic.user.repository.UserRepo;
+import com.foodtraffic.model.dto.UserDto;
+import com.foodtraffic.user.entity.Token;
+import com.foodtraffic.user.entity.User;
+import com.foodtraffic.user.entity.UserStatus;
+import com.foodtraffic.user.repository.TokenRepository;
+import com.foodtraffic.user.repository.UserRepository;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.modelmapper.ModelMapper;
@@ -28,16 +28,16 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    UserRepo userRepo;
+    UserRepository userRepo;
 
     @Autowired
-    TokenRepo tokenRepo;
+    TokenRepository tokenRepo;
 
     @Autowired
     ModelMapper modelMapper;
 
     @Override
-    public UserDto getUserById(Long id) {
+    public UserDto getUserById(long id) {
         Optional<User> user = userRepo.findUserById(id);
         if(user.isPresent()) {
             return modelMapper.map(user.get(), UserDto.class);
@@ -47,10 +47,10 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean userExists(String username, Long id) {
+    public boolean userExists(String username, long id) {
         if(username != null) {
             return userRepo.existsByUsernameIgnoreCase(username);
-        } else if(id != null) {
+        } else if(id > 0) {
             return userRepo.existsById(id);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username or Id is required");
@@ -101,7 +101,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(Long id, User request) {
+    public UserDto updateUser(long id, User request) {
         Optional<User> existingUser = userRepo.findUserById(id);
         if(existingUser.isPresent()){
             request = mergeUser(request, existingUser.get());

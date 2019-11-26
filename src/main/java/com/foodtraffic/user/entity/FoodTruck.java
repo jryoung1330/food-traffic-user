@@ -1,4 +1,4 @@
-package com.foodtraffic.user.model.entity;
+package com.foodtraffic.user.entity;
 
 import lombok.Data;
 
@@ -16,7 +16,7 @@ public class FoodTruck {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="FOODTRUCKID")
     @Min(0)
-    private Long id;
+    private long id;
 
     @Column(name="FOOD_TRUCK_NAME")
     @NotNull
@@ -28,10 +28,10 @@ public class FoodTruck {
     private String displayName;
 
     @Column(name = "LONGITUDE")
-    private Double longitude;
+    private double longitude;
 
     @Column(name="LATITUDE")
-    private Double latitude;
+    private double latitude;
 
     @Column(name = "STREET_ADDRESS")
     @Size(max = 100)

@@ -1,8 +1,8 @@
 package com.foodtraffic.user.service;
 
-import com.foodtraffic.user.model.dto.UserDto;
-import com.foodtraffic.user.model.entity.User;
-import com.foodtraffic.user.repository.UserRepo;
+import com.foodtraffic.model.dto.UserDto;
+import com.foodtraffic.user.entity.User;
+import com.foodtraffic.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -24,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceUpdateUserTest {
 
     @Mock
-    UserRepo userRepo;
+    UserRepository userRepo;
 
     @Mock
     ModelMapper modelMapper;
@@ -123,7 +123,7 @@ public class UserServiceUpdateUserTest {
 
     private User mockUser() {
         User mockUser = new User();
-        mockUser.setId(0);
+        mockUser.setId(0L);
         mockUser.setUsername("test");
         mockUser.setEmail("test@test.com");
         mockUser.setPasswordHash("742d2d94a64b9e155ad08540786eed509ccbfadda3f3e898f222000f4578048e");

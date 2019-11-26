@@ -1,10 +1,10 @@
 package com.foodtraffic.user.service;
 
-import com.foodtraffic.user.model.dto.UserDto;
-import com.foodtraffic.user.model.entity.Token;
-import com.foodtraffic.user.model.entity.User;
-import com.foodtraffic.user.repository.TokenRepo;
-import com.foodtraffic.user.repository.UserRepo;
+import com.foodtraffic.model.dto.UserDto;
+import com.foodtraffic.user.entity.Token;
+import com.foodtraffic.user.entity.User;
+import com.foodtraffic.user.repository.TokenRepository;
+import com.foodtraffic.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -31,10 +31,10 @@ public class UserServiceLoginUserTest {
     ModelMapper modelMapper;
 
     @Mock
-    UserRepo userRepo;
+    UserRepository userRepo;
 
     @Mock
-    TokenRepo tokenRepo;
+    TokenRepository tokenRepo;
 
     @InjectMocks
     UserServiceImpl userService;
@@ -119,7 +119,7 @@ public class UserServiceLoginUserTest {
 
     private User mockUser() {
         User mockUser = new User();
-        mockUser.setId(0);
+        mockUser.setId(0L);
         mockUser.setUsername("test");
         mockUser.setEmail("test@test.com");
         mockUser.setPasswordHash("835b456635e1ac11d3ee651b4c7d88276b730e79d76d9ccd7fa9637faf87791e");

@@ -1,4 +1,4 @@
-package com.foodtraffic.user.model.entity;
+package com.foodtraffic.user.entity;
 
 import lombok.Data;
 import javax.persistence.*;
@@ -38,16 +38,12 @@ public class User {
     private ZonedDateTime lastLogin;
 
     @Column(name = "STATUS")
-    private Integer status;
+    private int status;
 
     @Column(name = "IS_EMAIL_VERIFIED")
     private boolean isEmailVerified;
 
-    @OneToOne
-    @PrimaryKeyJoinColumn
-    private Employee employee; // TODO: remove annotations replace with call to employee service
-
-    @ManyToMany(cascade= CascadeType.ALL, fetch=FetchType.EAGER)
+    @OneToMany(fetch=FetchType.EAGER)
     @JoinTable(name="FAVORITE",
             joinColumns=@JoinColumn(name="USERID"),
             inverseJoinColumns=@JoinColumn(name="FOODTRUCKID"))
