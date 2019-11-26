@@ -13,7 +13,7 @@ public class Token {
     @Id
     @Column(name="TOKENID", columnDefinition = "SERIAL")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
 
     @NotNull
     @Column(name = "TOKEN_CODE")
@@ -21,6 +21,6 @@ public class Token {
 
     @NotNull
     @Column(name = "USERID")
-    public long userId;
+    public Long userId;
 
 }

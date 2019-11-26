@@ -16,7 +16,7 @@ public class FoodTruck {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="FOODTRUCKID")
     @Min(0)
-    private long id;
+    private Long id;
 
     @Column(name="FOOD_TRUCK_NAME")
     @NotNull
@@ -28,10 +28,10 @@ public class FoodTruck {
     private String displayName;
 
     @Column(name = "LONGITUDE")
-    private double longitude;
+    private Double longitude;
 
     @Column(name="LATITUDE")
-    private double latitude;
+    private Double latitude;
 
     @Column(name = "STREET_ADDRESS")
     @Size(max = 100)
@@ -55,7 +55,7 @@ public class FoodTruck {
     private String county;
 
     @Column(name = "ZIP_CODE")
-    private int zipCode;
+    private Integer zipCode;
 
     @Column(name = "LOCATION_DETAILS")
     @Size(max = 1000)
