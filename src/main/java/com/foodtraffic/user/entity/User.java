@@ -14,7 +14,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "FTUSERID")
-    private long id;
+    private Long id;
 
     @Email
     @Column(name = "EMAIL")
@@ -38,7 +38,7 @@ public class User {
     private ZonedDateTime lastLogin;
 
     @Column(name = "STATUS")
-    private int status;
+    private Integer status;
 
     @Column(name = "IS_EMAIL_VERIFIED")
     private boolean isEmailVerified;

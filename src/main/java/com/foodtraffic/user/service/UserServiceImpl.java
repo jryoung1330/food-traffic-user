@@ -39,7 +39,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getUserById(long id) {
         Optional<User> user = userRepo.findUserById(id);
-        if(user.isPresent()) {
+        if (user.isPresent()) {
             return modelMapper.map(user.get(), UserDto.class);
         } else {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User does not exist.");
@@ -48,9 +48,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public boolean userExists(String username, long id) {
-        if(username != null) {
+        if (username != null) {
             return userRepo.existsByUsernameIgnoreCase(username);
-        } else if(id > 0) {
+        } else if (id > 0) {
             return userRepo.existsById(id);
         } else {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Username or Id is required");
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto createUser(User user, HttpServletResponse response) {
-        if(isRequestValid(user.getUsername(), user.getEmail(), user.getPasswordHash())) {
+        if (isRequestValid(user.getUsername(), user.getEmail(), user.getPasswordHash())) {
 
             // create user
             hashPassword(user);
@@ -87,9 +87,9 @@ public class UserServiceImpl implements UserService {
     public UserDto checkToken(String accessToken) {
         Optional<Token> token = tokenRepo.findByTokenCode(accessToken);
         String message;
-        if(token.isPresent()) {
+        if (token.isPresent()) {
             User user = userRepo.getOne(token.get().getUserId());
-            if(UserStatus.ACTIVE.getStatusNum() != user.getStatus() && !user.isEmailVerified()) {
+            if (UserStatus.ACTIVE.getStatusNum() != user.getStatus() && !user.isEmailVerified()) {
                 message = "Email verification is required";
             } else {
                 return modelMapper.map(user, UserDto.class);
@@ -103,7 +103,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto updateUser(long id, User request) {
         Optional<User> existingUser = userRepo.findUserById(id);
-        if(existingUser.isPresent()){
+        if (existingUser.isPresent()){
             request = mergeUser(request, existingUser.get());
             if (!request.equals(existingUser.get())) {
                 userRepo.save(request);
@@ -185,7 +185,7 @@ public class UserServiceImpl implements UserService {
 
     // get credentials from authorization header
     private String[] getCredentialsFromHeader(List<String> authHeaders) {
-        if(authHeaders != null) {
+        if (authHeaders != null) {
             byte[] decodedHeaderBytes = Base64.getDecoder().decode(authHeaders.get(0).substring("Basic".length()).trim());
             String decodedHeader = new String(decodedHeaderBytes);
             return decodedHeader.split(":");
