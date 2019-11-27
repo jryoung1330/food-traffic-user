@@ -28,13 +28,13 @@ import java.util.Optional;
 public class UserServiceImpl implements UserService {
 
     @Autowired
-    UserRepository userRepo;
+    private UserRepository userRepo;
 
     @Autowired
-    TokenRepository tokenRepo;
+    private TokenRepository tokenRepo;
 
     @Autowired
-    ModelMapper modelMapper;
+    private ModelMapper modelMapper;
 
     @Override
     public UserDto getUserById(long id) {
@@ -63,8 +63,8 @@ public class UserServiceImpl implements UserService {
 
             // create user
             hashPassword(user);
-            user.setEmail(user.getEmail());
-            user.setUsername(user.getUsername());
+            user.setEmail(user.getEmail().toLowerCase());
+            user.setUsername(user.getUsername().toLowerCase());
             user.setJoinDate(ZonedDateTime.now());
             user.setStatus(UserStatus.ACTIVE.getStatusNum());
             user = userRepo.saveAndFlush(user);
@@ -207,7 +207,7 @@ public class UserServiceImpl implements UserService {
 
         if (user == null) {
             message = "User does not exist";
-        } else if (!"ACTIVE".equals(user.getStatus()) && !user.isEmailVerified()) {
+        } else if (UserStatus.ACTIVE.getStatusNum() != user.getStatus() && !user.isEmailVerified()) {
             message = "Email verification is required";
         } else if (!verifyPassword(credentials[1], user.getPasswordSalt(), user.getPasswordHash())) {
             message = "Password is incorrect";

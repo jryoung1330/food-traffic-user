@@ -1,8 +1,19 @@
 package com.foodtraffic.user.service;
 
-import com.foodtraffic.model.dto.UserDto;
-import com.foodtraffic.user.entity.User;
-import com.foodtraffic.user.repository.UserRepository;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Matchers.anyObject;
+import static org.mockito.Mockito.when;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.time.Month;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Optional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -12,13 +23,9 @@ import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.time.*;
-import java.util.Optional;
-
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.when;
-import static org.junit.jupiter.api.Assertions.*;
+import com.foodtraffic.model.dto.UserDto;
+import com.foodtraffic.user.entity.User;
+import com.foodtraffic.user.repository.UserRepository;
 
 @SpringBootTest
 public class UserServiceUpdateUserTest {
