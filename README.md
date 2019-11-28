@@ -1,2 +1,2 @@
-### FT user
+### FT User
 Service for users
