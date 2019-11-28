@@ -132,10 +132,10 @@
         <!-- ft models and clients -->
         <dependency>
             <groupId>com.foodtraffic</groupId>
-            <artifactId>models</artifactId>
+            <artifactId>ft-lib</artifactId>
             <version>1.0</version>
             <scope>system</scope>
-            <systemPath>${project.basedir}/src/main/resources/models-1.0.jar</systemPath>
+            <systemPath>${project.basedir}/src/main/resources/ft-lib-1.0.jar</systemPath>
         </dependency>
     </dependencies>
 </project>
