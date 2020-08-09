@@ -8,7 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public interface UserService {
 
-	String emailRegex = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*"
+	String EMAIL_REGEX = "(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*"
 			+ "|\"(?:[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21\\x23-\\x5b\\x5d-\\x7f]|\\\\"
 			+ "[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])*\")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\\.)+"
 			+ "[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.)"
@@ -18,13 +18,16 @@ public interface UserService {
 
 	UserDto getUserById(long id);
 
-	boolean userExists(String username, long id);
+	boolean userExists(String username);
 
-	UserDto createUser(User user, HttpServletResponse response);
+	UserDto createUser(String authHeader, User user, HttpServletResponse response);
 
-	UserDto loginUser(HttpHeaders headers, String token, HttpServletResponse response);
+	UserDto loginUser(String authHeader, String token, HttpServletResponse response);
 
 	UserDto checkToken(String token);
 
-	UserDto updateUser(long id, User user);
+	UserDto updateUser(long id, User user, String verificationCode);
+	
+	UserDto toggleFavorite(long userId, long vendorId);
+
 }

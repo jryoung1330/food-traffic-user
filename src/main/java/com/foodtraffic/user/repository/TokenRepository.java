@@ -11,6 +11,6 @@ import com.foodtraffic.user.entity.Token;
 public interface TokenRepository extends JpaRepository<Token, Long> {
 
 	Optional<Token> findByTokenCode(String tokenCode);
-
 	Token getByUserId(Long id);
+	boolean existsByTokenCode(String tokenCode);
 }

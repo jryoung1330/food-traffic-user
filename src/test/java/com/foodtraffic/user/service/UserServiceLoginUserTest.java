@@ -1,18 +1,11 @@
 package com.foodtraffic.user.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.when;
-
-import java.time.LocalDate;
-import java.time.LocalTime;
-import java.time.Month;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.Optional;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.foodtraffic.model.dto.UserDto;
+import com.foodtraffic.user.entity.Token;
+import com.foodtraffic.user.entity.User;
+import com.foodtraffic.user.entity.UserStatus;
+import com.foodtraffic.user.repository.TokenRepository;
+import com.foodtraffic.user.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -20,15 +13,16 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpHeaders;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.server.ResponseStatusException;
 
-import com.foodtraffic.model.dto.UserDto;
-import com.foodtraffic.user.entity.Token;
-import com.foodtraffic.user.entity.User;
-import com.foodtraffic.user.repository.TokenRepository;
-import com.foodtraffic.user.repository.UserRepository;
+import javax.servlet.http.HttpServletResponse;
+import java.time.*;
+import java.util.Optional;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
@@ -46,7 +40,7 @@ public class UserServiceLoginUserTest {
     @InjectMocks
     UserServiceImpl userService;
 
-    HttpHeaders headers = new HttpHeaders();
+    private static final String AUTH_HEADER = "dGVzdDpwYXNzd29yZA==";
 
     HttpServletResponse response = new MockHttpServletResponse();
 
@@ -62,66 +56,60 @@ public class UserServiceLoginUserTest {
 
     @Test
     public void givenValidCredentialsAndNoTokenInDatabase_whenUserLogin_createNewTokenAndReturnUser() {
-        headers.set("Authorization", "Basic dGVzdDpwYXNzd29yZA==");
-        assertEquals(userService.loginUser(headers, "", response), mockUserDto());
+        assertEquals(userService.loginUser(AUTH_HEADER, "", response), mockUserDto());
     }
 
     @Test
     public void givenValidCredentialsAndTokenInDatabase_whenUserLogin_updateTokenAndReturnUser() {
         when(tokenRepo.getByUserId(0L)).thenReturn(mockToken());
-        headers.set("Authorization", "Basic dGVzdDpwYXNzd29yZA==");
-        assertEquals(userService.loginUser(headers, "", response), mockUserDto());
+        assertEquals(userService.loginUser(AUTH_HEADER, "", response), mockUserDto());
     }
 
     @Test
     public void givenInvalidPassword_whenUserLogin_throwException() {
-        headers.set("Authorization", "Basic dGVzdDpwYXNzd29yZDEyMw==");
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "", response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(AUTH_HEADER, "", response));
     }
 
     @Test
     public void givenUserDoesNotExist_whenUserLogin_throwException() {
         when(userRepo.getUserByUsernameIgnoreCaseOrEmailIgnoreCase("test", "test")).thenReturn(null);
-        headers.set("Authorization", "Basic dGVzdDpwYXNzd29yZA==");
-
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "", response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(AUTH_HEADER, "", response));
     }
 
     @Test
     public void givenValidAccessToken_whenUserLogin_returnUser() {
-        assertEquals(userService.loginUser(headers, "1a2b3c4d5e6f7g8h", response), mockUserDto());
+        assertEquals(userService.loginUser(null, "1a2b3c4d5e6f7g8h", response), mockUserDto());
     }
 
     @Test
     public void givenInvalidAccessToken_whenUserLogin_throwException() {
         when(tokenRepo.findByTokenCode("1a2b3c4d5e6f7g8h")).thenReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "1a2b3c4d5e6f7g8h", response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(null, "1a2b3c4d5e6f7g8h", response));
     }
 
     @Test
     public void givenValidCredentialsButUserIsInactive_whenUserLogin_throwException() {
-        headers.set("Authorization", "Basic dGVzdDpwYXNzd29yZA==");
         User mockUser = mockUser();
-        mockUser.setStatus(2);
+        mockUser.setStatus(UserStatus.HOLD.name());
         mockUser.setEmailVerified(false);
         when(userRepo.getUserByUsernameIgnoreCaseOrEmailIgnoreCase("test", "test")).thenReturn(mockUser);
 
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "", response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(AUTH_HEADER, "", response));
     }
 
     @Test
     public void givenValidAccessTokenButUserIsInactive_whenUserLogin_throwException() {
         User mockUser = mockUser();
-        mockUser.setStatus(2);
+        mockUser.setStatus(UserStatus.HOLD.name());
         mockUser.setEmailVerified(false);
         when(userRepo.getOne(0L)).thenReturn(mockUser);
 
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "1a2b3c4d5e6f7g8h", response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(null, "1a2b3c4d5e6f7g8h", response));
     }
 
     @Test
     public void givenNoAuthHeaderAndNoAccessToken_whenUserLogin_throwException() {
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(headers, "", response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(null, "", response));
     }
 
     private User mockUser() {
@@ -131,7 +119,7 @@ public class UserServiceLoginUserTest {
         mockUser.setEmail("test@test.com");
         mockUser.setPasswordHash("835b456635e1ac11d3ee651b4c7d88276b730e79d76d9ccd7fa9637faf87791e");
         mockUser.setPasswordSalt("1e1845243ce6bb70");
-        mockUser.setStatus(0);
+        mockUser.setStatus(UserStatus.ACTIVE.name());
         mockUser.setJoinDate(ZonedDateTime.of(LocalDate.of(2020, Month.JANUARY, 1), LocalTime.of(12, 1), ZoneId.of("UTC")));
         mockUser.setEmailVerified(true);
         return mockUser;

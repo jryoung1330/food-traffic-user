@@ -24,7 +24,7 @@ import com.foodtraffic.user.service.UserService;
 
 import io.swagger.annotations.Api;
 
-@CrossOrigin(origins = {"http://localhost:3000"})
+@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
 @RestController
 @RequestMapping("/users")
 @Api(tags = "User")
@@ -39,33 +39,44 @@ public class UserController {
     }
 
     @GetMapping("/check-user")
-    public boolean checkUserExists(@RequestParam(required = false) String username, @RequestParam(required = false) Long id){
-        return userService.userExists(username, id);
+    public boolean checkUserExists(@RequestParam(name="username") String username) {
+        return userService.userExists(username);
     }
 
-    @GetMapping("/token")
-    public UserDto checkAccessHeader(@RequestHeader(value = "Cookie") String accessToken) {
-        return userService.checkToken(accessToken);
-    }
-
+//    @GetMapping("/token")
+//    public UserDto checkAccessHeader(@RequestHeader(value = "Cookie") String accessToken) {
+//        return userService.checkToken(accessToken);
+//    }
+    
     @PostMapping("/token")
     public UserDto checkAccess(@CookieValue(value = "_gid", defaultValue="") String accessToken) {
         return userService.checkToken(accessToken);
     }
 
     @PostMapping("/login")
-    public UserDto loginUser(@RequestHeader HttpHeaders headers, HttpServletResponse response, @CookieValue(value = "_gid", defaultValue="") String accessToken) {
-        return userService.loginUser(headers, accessToken, response);
+    public UserDto loginUser(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String authHeader,
+                             @CookieValue(value = "_gid", defaultValue="") String accessToken,
+                             HttpServletResponse response) {
+        return userService.loginUser(authHeader, accessToken, response);
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public UserDto createUser(@RequestBody User user, HttpServletResponse response) {
-        return userService.createUser(user, response);
+    public UserDto createUser(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String authHeader,
+                              @RequestBody User user,
+                              HttpServletResponse response) {
+        return userService.createUser(authHeader, user, response);
     }
 
     @PutMapping("/{id}")
-    public UserDto updateUser(@PathVariable Long id, @RequestBody User user) {
-        return userService.updateUser(id, user);
+    public UserDto updateUser(@PathVariable Long id,
+                              @RequestBody User user,
+                              @RequestParam(name = "verify") String verificationCode) {
+        return userService.updateUser(id, user, verificationCode);
+    }
+    
+    @PutMapping("/{id}/favorites/{vendorId}")
+    public UserDto toggleFavorite(@PathVariable Long id, @PathVariable Long vendorId) {
+    	return userService.toggleFavorite(id, vendorId);
     }
 }

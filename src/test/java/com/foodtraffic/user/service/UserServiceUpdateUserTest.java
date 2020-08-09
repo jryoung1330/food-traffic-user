@@ -14,6 +14,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 
+import com.foodtraffic.user.entity.UserStatus;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -57,7 +58,7 @@ public class UserServiceUpdateUserTest {
         when(userRepo.saveAndFlush(anyObject())).thenReturn(mockUser());
         when(modelMapper.map(mockUser(), UserDto.class)).thenReturn(mockUserDto());
 
-        assertEquals(userService.updateUser(0L, user), mockUserDto());
+        assertEquals(userService.updateUser(0L, user, null), mockUserDto());
     }
 
     @Test
@@ -73,13 +74,13 @@ public class UserServiceUpdateUserTest {
         mockUserDto.setUsername("test1");
         when(modelMapper.map(mockUser, UserDto.class)).thenReturn(mockUserDto);
 
-        assertEquals("test1", userService.updateUser(0L, user).getUsername());
+        assertEquals("test1", userService.updateUser(0L, user, null).getUsername());
     }
 
     @Test
     public void givenInvalidUsername_whenUpdateUser_throwsException() {
         user.setUsername("test1*");
-        assertThrows(ResponseStatusException.class, () -> userService.updateUser(0L, user));
+        assertThrows(ResponseStatusException.class, () -> userService.updateUser(0L, user, null));
     }
 
     @Test
@@ -95,13 +96,13 @@ public class UserServiceUpdateUserTest {
         mockUserDto.setEmail("test1@test.com");
         when(modelMapper.map(mockUser, UserDto.class)).thenReturn(mockUserDto);
 
-        assertEquals("test1@test.com", userService.updateUser(0L, user).getEmail());
+        assertEquals("test1@test.com", userService.updateUser(0L, user, null).getEmail());
     }
 
     @Test
     public void givenInvalidEmail_whenUpdateUser_throwsException() {
         user.setEmail("test1@testcom");
-        assertThrows(ResponseStatusException.class, () -> userService.updateUser(0L, user));
+        assertThrows(ResponseStatusException.class, () -> userService.updateUser(0L, user, null));
     }
 
     @Test
@@ -113,19 +114,19 @@ public class UserServiceUpdateUserTest {
         when(userRepo.saveAndFlush(mockUser)).thenReturn(mockUser);
         when(modelMapper.map(mockUser, UserDto.class)).thenReturn(mockUserDto());
 
-        assertNull(userService.updateUser(0L, user));
+        assertNull(userService.updateUser(0L, user, null));
     }
 
     @Test
     public void givenInvalidPassword_whenUpdateUser_throwsException() {
         user.setPasswordHash("cGFzc3dvcmQxMjMq"); // = password123*
-        assertThrows(ResponseStatusException.class, () -> userService.updateUser(0L, user));
+        assertThrows(ResponseStatusException.class, () -> userService.updateUser(0L, user, null));
     }
 
     @Test
     public void givenUserNotFound_whenUpdateUser_returnNull() {
         when(userRepo.findUserById(anyLong())).thenReturn(Optional.empty());
-        assertNull(userService.updateUser(100000L, user));
+        assertNull(userService.updateUser(100000L, user, null));
     }
 
     private User mockUser() {
@@ -135,7 +136,7 @@ public class UserServiceUpdateUserTest {
         mockUser.setEmail("test@test.com");
         mockUser.setPasswordHash("742d2d94a64b9e155ad08540786eed509ccbfadda3f3e898f222000f4578048e");
         mockUser.setPasswordSalt("01234567abcdefgh");
-        mockUser.setStatus(0);
+        mockUser.setStatus(UserStatus.ACTIVE.name());
         mockUser.setJoinDate(ZonedDateTime.of(LocalDate.of(2020, Month.JANUARY, 1), LocalTime.of(12, 1), ZoneId.of("UTC")));
         mockUser.setEmailVerified(false);
         return mockUser;
