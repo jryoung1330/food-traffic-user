@@ -87,12 +87,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserDto loginUser(final String authHeader, final String accessToken, HttpServletResponse response) {
-        return !accessToken.isEmpty() ? checkToken(accessToken) : checkCredentials(authHeader, response);
+    public UserDto loginUser(final String authHeader, HttpServletResponse response) {
+        return checkCredentials(authHeader, response);
     }
 
     @Override
-    public UserDto checkToken(final String accessToken) {
+    public UserDto logoutUser(final String accessToken, HttpServletResponse response) {
+        Optional<Token> token = tokenRepo.findByTokenCode(accessToken);
+
+        if(token.isPresent()) {
+            tokenRepo.delete(token.get());
+            addCookie(response, null, 0);
+        }
+
+        return null;
+    }
+
+    @Override
+    public UserDto checkToken(String accessToken) {
+        if(accessToken.startsWith("Bearer")) accessToken = accessToken.substring("Bearer ".length());
         Optional<Token> token = tokenRepo.findByTokenCode(accessToken);
         String message;
 
@@ -150,7 +163,13 @@ public class UserServiceImpl implements UserService {
     	
     	return getUserById(userId);
     }
-    
+
+    @Override
+    public boolean isVendorFavorite(Long id, Long vendorId) {
+        Optional<Favorite> favorite = favoriteRepo.findByUserIdAndVendorId(id, vendorId);
+        return favorite.isPresent();
+    }
+
     /*
      * Helper methods
      */
@@ -167,7 +186,7 @@ public class UserServiceImpl implements UserService {
     // get credentials from authorization header
     private String[] getCredentialsFromHeader(String authHeader) {
         if (authHeader != null) {
-            byte[] decodedHeaderBytes = Base64.getDecoder().decode(authHeader);
+            byte[] decodedHeaderBytes = Base64.getDecoder().decode(authHeader.substring(6));
             String decodedHeader = new String(decodedHeaderBytes);
             return decodedHeader.split(":");
         } else {
@@ -194,14 +213,15 @@ public class UserServiceImpl implements UserService {
         token.setUserId(id);
         token.setTokenCode(generateRandomToken(tokenSize));
         tokenRepo.save(token);
-        addCookie(response, token.getTokenCode());
+        addCookie(response, token.getTokenCode(), null);
     }
 
     // adds cookie to the response
-    private void addCookie(HttpServletResponse response, String accessToken) {
+    private void addCookie(HttpServletResponse response, String accessToken, Integer expiration) {
         Cookie cookie = new Cookie("_gid", accessToken);
         cookie.setPath("/");
         cookie.setHttpOnly(true);
+        if(expiration != null) cookie.setMaxAge(expiration);
         response.addCookie(cookie);
     }
 

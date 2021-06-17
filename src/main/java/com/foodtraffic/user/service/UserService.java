@@ -22,7 +22,9 @@ public interface UserService {
 
 	UserDto createUser(String authHeader, User user, HttpServletResponse response);
 
-	UserDto loginUser(String authHeader, String token, HttpServletResponse response);
+	UserDto loginUser(String authHeader, HttpServletResponse response);
+
+	UserDto logoutUser(String accessToken, HttpServletResponse response);
 
 	UserDto checkToken(String token);
 
@@ -30,4 +32,5 @@ public interface UserService {
 	
 	UserDto toggleFavorite(long userId, long vendorId);
 
+	boolean isVendorFavorite(Long id, Long vendorId);
 }

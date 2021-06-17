@@ -56,36 +56,36 @@ public class UserServiceLoginUserTest {
 
     @Test
     public void givenValidCredentialsAndNoTokenInDatabase_whenUserLogin_createNewTokenAndReturnUser() {
-        assertEquals(userService.loginUser(AUTH_HEADER, "", response), mockUserDto());
+        assertEquals(userService.loginUser(AUTH_HEADER, response), mockUserDto());
     }
 
     @Test
     public void givenValidCredentialsAndTokenInDatabase_whenUserLogin_updateTokenAndReturnUser() {
         when(tokenRepo.getByUserId(0L)).thenReturn(mockToken());
-        assertEquals(userService.loginUser(AUTH_HEADER, "", response), mockUserDto());
+        assertEquals(userService.loginUser(AUTH_HEADER, response), mockUserDto());
     }
 
     @Test
     public void givenInvalidPassword_whenUserLogin_throwException() {
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(AUTH_HEADER, "", response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(AUTH_HEADER, response));
     }
 
     @Test
     public void givenUserDoesNotExist_whenUserLogin_throwException() {
         when(userRepo.getUserByUsernameIgnoreCaseOrEmailIgnoreCase("test", "test")).thenReturn(null);
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(AUTH_HEADER, "", response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(AUTH_HEADER, response));
     }
 
-    @Test
-    public void givenValidAccessToken_whenUserLogin_returnUser() {
-        assertEquals(userService.loginUser(null, "1a2b3c4d5e6f7g8h", response), mockUserDto());
-    }
+//    @Test
+//    public void givenValidAccessToken_whenUserLogin_returnUser() {
+//        assertEquals(userService.loginUser(null, "1a2b3c4d5e6f7g8h", response), mockUserDto());
+//    }
 
-    @Test
-    public void givenInvalidAccessToken_whenUserLogin_throwException() {
-        when(tokenRepo.findByTokenCode("1a2b3c4d5e6f7g8h")).thenReturn(Optional.empty());
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(null, "1a2b3c4d5e6f7g8h", response));
-    }
+//    @Test
+//    public void givenInvalidAccessToken_whenUserLogin_throwException() {
+//        when(tokenRepo.findByTokenCode("1a2b3c4d5e6f7g8h")).thenReturn(Optional.empty());
+//        assertThrows(ResponseStatusException.class, () -> userService.loginUser(null, "1a2b3c4d5e6f7g8h", response));
+//    }
 
     @Test
     public void givenValidCredentialsButUserIsInactive_whenUserLogin_throwException() {
@@ -94,22 +94,22 @@ public class UserServiceLoginUserTest {
         mockUser.setEmailVerified(false);
         when(userRepo.getUserByUsernameIgnoreCaseOrEmailIgnoreCase("test", "test")).thenReturn(mockUser);
 
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(AUTH_HEADER, "", response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(AUTH_HEADER, response));
     }
 
-    @Test
-    public void givenValidAccessTokenButUserIsInactive_whenUserLogin_throwException() {
-        User mockUser = mockUser();
-        mockUser.setStatus(UserStatus.HOLD.name());
-        mockUser.setEmailVerified(false);
-        when(userRepo.getOne(0L)).thenReturn(mockUser);
-
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(null, "1a2b3c4d5e6f7g8h", response));
-    }
+//    @Test
+//    public void givenValidAccessTokenButUserIsInactive_whenUserLogin_throwException() {
+//        User mockUser = mockUser();
+//        mockUser.setStatus(UserStatus.HOLD.name());
+//        mockUser.setEmailVerified(false);
+//        when(userRepo.getOne(0L)).thenReturn(mockUser);
+//
+//        assertThrows(ResponseStatusException.class, () -> userService.loginUser(null, "1a2b3c4d5e6f7g8h", response));
+//    }
 
     @Test
     public void givenNoAuthHeaderAndNoAccessToken_whenUserLogin_throwException() {
-        assertThrows(ResponseStatusException.class, () -> userService.loginUser(null, "", response));
+        assertThrows(ResponseStatusException.class, () -> userService.loginUser(null, response));
     }
 
     private User mockUser() {

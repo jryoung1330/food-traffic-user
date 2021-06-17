@@ -24,7 +24,7 @@ import com.foodtraffic.user.service.UserService;
 
 import io.swagger.annotations.Api;
 
-@CrossOrigin(origins = {"http://localhost:3000"}, allowCredentials = "true")
+@CrossOrigin(origins = {"http://localhost:3000", "http://localhost:4200"}, allowCredentials="true")
 @RestController
 @RequestMapping("/users")
 @Api(tags = "User")
@@ -43,10 +43,15 @@ public class UserController {
         return userService.userExists(username);
     }
 
-//    @GetMapping("/token")
-//    public UserDto checkAccessHeader(@RequestHeader(value = "Cookie") String accessToken) {
-//        return userService.checkToken(accessToken);
-//    }
+    @GetMapping("/token")
+    public UserDto checkAccessHeader(@RequestHeader(HttpHeaders.AUTHORIZATION) String accessToken) {
+        return userService.checkToken(accessToken);
+    }
+
+    @GetMapping("/{id}/favorites/{vendorId}")
+    public boolean isVendorFavorite(@PathVariable Long id, @PathVariable Long vendorId) {
+        return userService.isVendorFavorite(id, vendorId);
+    }
     
     @PostMapping("/token")
     public UserDto checkAccess(@CookieValue(value = "_gid", defaultValue="") String accessToken) {
@@ -55,9 +60,14 @@ public class UserController {
 
     @PostMapping("/login")
     public UserDto loginUser(@RequestHeader(name = HttpHeaders.AUTHORIZATION) String authHeader,
-                             @CookieValue(value = "_gid", defaultValue="") String accessToken,
                              HttpServletResponse response) {
-        return userService.loginUser(authHeader, accessToken, response);
+        return userService.loginUser(authHeader, response);
+    }
+
+    @PostMapping("/{id}/logout")
+    public UserDto checkAccess(@CookieValue(value = "_gid", defaultValue="") String accessToken,
+                               HttpServletResponse response) {
+        return userService.logoutUser(accessToken, response);
     }
 
     @PostMapping
