@@ -255,6 +255,9 @@ public class UserServiceImpl implements UserService {
             if (token != null) {
                 tokenRepo.delete(token);
             }
+
+
+
             createUserToken(user.getId(), 8, response);
             return modelMapper.map(user, UserDto.class);
         }

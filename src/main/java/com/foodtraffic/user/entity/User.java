@@ -48,4 +48,11 @@ public class User {
     @Column(name = "STATUS")
     private String status;
 
+    @Column(name = "IS_VENDOR_ACCOUNT")
+    private boolean isVendorAccount;
+
+    @OneToOne
+    @JoinColumn(name = "USERID", referencedColumnName = "userId")
+    private Employee employee;
+
 }
