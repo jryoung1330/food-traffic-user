@@ -18,6 +18,12 @@ public class User {
     @Column(name = "USERID")
     private Long id;
 
+    @Column(name = "FIRST_NAME")
+    private String firstName;
+
+    @Column(name = "LAST_NAME")
+    private String lastName;
+
     @Email
     @Column(name = "EMAIL")
     private String email;
