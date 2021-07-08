@@ -18,6 +18,12 @@ public class User {
     @Column(name = "USERID")
     private Long id;
 
+    @Column(name = "FIRST_NAME")
+    private String firstName;
+
+    @Column(name = "LAST_NAME")
+    private String lastName;
+
     @Email
     @Column(name = "EMAIL")
     private String email;
@@ -48,11 +54,8 @@ public class User {
     @Column(name = "STATUS")
     private String status;
 
-    @Column(name = "IS_VENDOR_ACCOUNT")
-    private boolean isVendorAccount;
-
     @OneToOne
-    @JoinColumn(name = "USERID", referencedColumnName = "userId")
+    @JoinColumn(name = "USERID", referencedColumnName = "id")
     private Employee employee;
 
 }

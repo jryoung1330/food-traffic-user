@@ -8,6 +8,11 @@
 	<artifactId>food-traffic-user</artifactId>
 	<version>1.0-SNAPSHOT</version>
 
+	<properties>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.source>11</maven.compiler.source>
+	</properties>
+
 	<build>
 		<plugins>
 			<plugin>
@@ -148,6 +153,8 @@
 			<artifactId>ft-lib</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+
+		<!-- validation api -->
 		<dependency>
 			<groupId>javax.validation</groupId>
 			<artifactId>validation-api</artifactId>
