@@ -1,16 +1,20 @@
 package com.foodtraffic.user.entity;
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.time.ZonedDateTime;
+import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@ToString
 @Table(name="USER_ACCOUNT")
-@Data
 public class User {
 
     @Id
@@ -58,4 +62,16 @@ public class User {
     @JoinColumn(name = "USERID", referencedColumnName = "id")
     private Employee employee;
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        User user = (User) o;
+        return id != null && Objects.equals(id, user.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 }

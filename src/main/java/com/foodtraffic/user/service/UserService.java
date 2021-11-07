@@ -2,7 +2,6 @@ package com.foodtraffic.user.service;
 
 import com.foodtraffic.model.dto.UserDto;
 import com.foodtraffic.user.entity.User;
-import org.springframework.http.HttpHeaders;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -16,21 +15,15 @@ public interface UserService {
 			+ "[\\x01-\\x08\\x0b\\x0c\\x0e-\\x1f\\x21-\\x5a\\x53-\\x7f]|\\\\"
 			+ "[\\x01-\\x09\\x0b\\x0c\\x0e-\\x7f])+)\\])";
 
-	UserDto getUserById(long id);
+	UserDto getUserById(String accessToken, long id);
 
-	boolean userExists(String username);
-
-	UserDto createUser(String authHeader, User user, HttpServletResponse response);
-
-	UserDto loginUser(String authHeader, HttpServletResponse response);
-
-	UserDto logoutUser(String accessToken, HttpServletResponse response);
+	UserDto createUser(String accessToken, User user);
 
 	UserDto checkToken(String token);
 
-	UserDto updateUser(long id, User user, String verificationCode);
+	UserDto updateUser(String accessToken, long id, User user);
 	
-	UserDto toggleFavorite(long userId, long vendorId);
+	UserDto toggleFavorite(String accessToken, long userId, long vendorId);
 
 	boolean isVendorFavorite(Long id, Long vendorId);
 }

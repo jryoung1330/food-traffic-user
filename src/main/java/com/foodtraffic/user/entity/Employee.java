@@ -1,12 +1,16 @@
 package com.foodtraffic.user.entity;
 
-import lombok.Data;
+import lombok.*;
+import org.hibernate.Hibernate;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@ToString
 @Table(name = "EMPLOYEE")
-@Data
 public class Employee {
 
     @Id
@@ -25,4 +29,18 @@ public class Employee {
 
     @OneToOne (mappedBy = "employee")
     private User user;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+        Employee employee = (Employee) o;
+        return id != null && Objects.equals(id, employee.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 }
+

@@ -1,28 +1,40 @@
 package com.foodtraffic.user.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.*;
+import org.hibernate.Hibernate;
 
-import lombok.Data;
+import javax.persistence.*;
+import java.util.Objects;
 
 @Entity
+@Getter
+@Setter
+@ToString
 @Table(name = "FAVORITE")
-@Data
 public class Favorite {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "FAVORITEID")
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "FAVORITEID")
 	private Long id;
-	
+
 	@Column(name = "VENDORID")
 	private Long vendorId;
-	
+
 	@Column(name = "USERID")
 	private Long userId;
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
+		Favorite favorite = (Favorite) o;
+		return id != null && Objects.equals(id, favorite.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return 0;
+	}
 }
+
