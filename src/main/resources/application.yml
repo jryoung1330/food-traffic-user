@@ -1,5 +1,8 @@
 server:
-  port: 8888
+  port: 8889
+
+auth0:
+  audience: ${USER_AUDIENCE}
 
 spring:
   datasource:
@@ -17,3 +20,8 @@ spring:
         format_sql: true
         temp:
           use_jdbc_metadata_defaults: false
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${AUTH_SERVER}

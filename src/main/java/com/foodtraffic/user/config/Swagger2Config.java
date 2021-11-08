@@ -1,4 +1,4 @@
-package com.foodtraffic.user.swaggerconfig;
+package com.foodtraffic.user.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,6 +22,7 @@ public class Swagger2Config {
                 .paths(PathSelectors.regex("/.*"))
                 .build().apiInfo(apiEndPointsInfo());
     }
+
     private ApiInfo apiEndPointsInfo() {
         return new ApiInfoBuilder().title("Food Traffic REST API")
                 .version("1.0.0")
